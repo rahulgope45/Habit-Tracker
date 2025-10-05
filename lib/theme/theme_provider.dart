@@ -30,5 +30,10 @@ class ThemeProvider  extends ChangeNotifier{
       }
      }
 
+     void refreshTheme(){
+      _themeData = _themeData == lightMode ? lightMode : darkMode;
+      notifyListeners();
+     }
+
 
 }

@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:habit_tracker/Pages/home_page.dart';
 import 'package:habit_tracker/theme/theme_provider.dart';
-import 'package:habit_tracker/theme/dark_mode.dart';
-import 'package:habit_tracker/theme/light_mode.dart';
 
 import 'package:provider/provider.dart';
 
@@ -16,7 +14,7 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-   MyApp({super.key});
+   const MyApp({super.key});
 
   
   @override

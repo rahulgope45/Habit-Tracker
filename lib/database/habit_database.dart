@@ -64,7 +64,15 @@ class HabitDatabase extends ChangeNotifier{
       //fetch all habits
       List<Habit> fetchedHabits = await isar.habits.where().findAll();
 
-      
+
+      //give to current habits
+      currentHabits.clear();
+      currentHabits.addAll(fetchedHabits);
+
+      //update UI
+      notifyListeners();
+
+
    }
 
 

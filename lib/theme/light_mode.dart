@@ -7,7 +7,7 @@ ThemeData lightMode = ThemeData(
     onSurface: Colors.black,
     primary: Color(0xFFB0BEC5),
     secondary: Color(0xFFE0E0E0),
-    tertiary: Colors.white,
+    tertiary: Color.fromARGB(255, 0, 0, 0),
     inversePrimary: Color(0xFF212121),
   ),
   scaffoldBackgroundColor: const Color(0xFFF5F5F5),

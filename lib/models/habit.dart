@@ -13,10 +13,11 @@ class Habit {
   late String name;
 
   //Completed Days
+  List<DateTime> completedDays = [
   //DateTime{year,month, day},
   //DateTime{2025,1, 1},
   //DateTime{2025,1, 2},
-
+ ];
 }
 
 

@@ -2,6 +2,8 @@
 import 'package:flutter/material.dart';
 import 'package:habit_tracker/componets/my_drawer.dart';
 import 'package:habit_tracker/database/habit_database.dart';
+import 'package:habit_tracker/models/habit.dart';
+import 'package:habit_tracker/util/habit_util.dart';
 import 'package:provider/provider.dart';
 
 
@@ -15,6 +17,18 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> { 
+
+  void initState(){
+    //read existing habits on app startup
+    Provider.of<HabitDatabase>(context, listen: false).readHabits();
+
+    super.initState();
+  }
+
+
+
+
+//Read existing habits on  app startup 
 
   final TextEditingController textControler = TextEditingController();
 
@@ -85,7 +99,31 @@ void createNewHabit(){
         
         ),
 
+    body: _buildHabitList(),
+
       
     );
+  }
+
+  Widget _buildHabitList(){
+    //habit db
+    final habitDatabase = context.watch<HabitDatabase>();
+
+    List<Habit> currentHabits =habitDatabase.currentHabits;
+
+    //current habits
+    return ListView.builder(
+      itemCount: currentHabits.length,
+      itemBuilder: (context, index){
+        //get each individual habit
+        final habit = currentHabits[index];
+
+        //check if the habit completed today
+        bool isCompletedToday = isHabitCompletedToday(habit.completedDays);
+
+        return ListTile(
+          title: Text(habit.name),
+        );
+      },);
   }
 }

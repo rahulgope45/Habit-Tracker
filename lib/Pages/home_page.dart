@@ -94,6 +94,103 @@ void checkHabitOnOff(bool? value, Habit habit)async{
 }
 
 
+// edit habit box
+void editHabitBox(Habit habit) {
+  //set the controler text  to the habits current name
+  textControler.text = habit.name;
+
+  showDialog(
+    context: context,
+     builder: (context) => AlertDialog(
+      content: TextField(
+        controller: textControler,
+      ),
+      actions: [
+       
+        //saveButton
+        MaterialButton(
+          onPressed: (){
+        //get the new habit name
+        String newHabitName = textControler.text;
+
+        //save to db
+        context.read<HabitDatabase>().updateHabitName(habit.id, newHabitName);
+
+        //pop box
+        Navigator.pop(context);
+
+        //clear controller
+        textControler.clear();
+
+          },
+        child: const Text('save'),
+          ),
+        
+        //cancel button
+        MaterialButton(
+          onPressed: () {
+            //pop box
+            Navigator.pop(context);
+
+            //clear controler
+            textControler.clear();
+          },
+          child: const Text('Cancel'),
+          )
+
+        //cancel button
+      ],
+
+     )
+     );
+}
+
+
+
+//delete habit box
+void deleteHabitBox(Habit habit){
+  showDialog(
+    context: context,
+     builder: (context) => AlertDialog(
+      title: const Text("Are you sure you want to delete?"),
+      actions: [
+       
+        //delete Button
+        MaterialButton(
+          onPressed: (){
+        
+        //save to db
+        context.read<HabitDatabase>().deleteHabit(habit.id);
+
+        //pop box
+        Navigator.pop(context);
+
+        
+
+          },
+        child: const Text('Delete'),
+          ),
+        
+        //cancel button
+        MaterialButton(
+          onPressed: () {
+            //pop box
+            Navigator.pop(context);
+
+           
+          },
+          child: const Text('Cancel'),
+          )
+
+        //cancel button
+      ],
+
+     )
+     );
+
+}
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold( 
@@ -137,6 +234,8 @@ void checkHabitOnOff(bool? value, Habit habit)async{
           text: habit.name,
            isCompleted: isCompletedToday,
            onChanged: (value) => checkHabitOnOff(value, habit),
+           editHabit: (context) => editHabitBox(habit),
+           deleteHabit: (context) => deleteHabitBox(habit),
            );
       },);
   }

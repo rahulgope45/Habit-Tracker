@@ -75,44 +75,37 @@ class HabitDatabase extends ChangeNotifier{
 
    }
 
-   //UPDATE -check habit on and off
-   Future<void> updateHabitCompletion(int id, bool isCompleted) async{
-      //find the specific habit
-      final habit = await isar.habits.get(id);
+//UPDATE -check habit on and off
+Future<void> updateHabitCompletion(int id, bool isCompleted) async {
+  final habit = await isar.habits.get(id);
 
-      //update completion status
-      if(habit != null){
-         await isar.writeTxn(() async {
-            //If habit is completed -> add the current date to the completedDays List
-            if (isCompleted && !habit.completedDays.contains(DateTime.now())){
-               final today = DateTime.now();
+  if (habit != null) {
+    await isar.writeTxn(() async {
+      final today = DateTime.now();
+      final todayDate = DateTime(today.year, today.month, today.day);
+      final todayMs = todayDate.millisecondsSinceEpoch;
 
-               //add the current date if it's not already in the list
-               habit.completedDays.add(
-                 DateTime(
-                  today.year,
-                  today.month,
-                  today.day,
-                 ),
-               );
-            }
-            //if habit is not completed -> remove the current date from the list
-            else{
-               //remove the current date if the habit is marked as not complete
-               habit.completedDays.retainWhere(
-               (date) =>
-                    date.year == DateTime.now().year &&
-                    date.month == DateTime.now().month &&
-                    date.day == DateTime.now().day,
-               );
-            }
-            //Save the updated habits back to the db
-            await isar.habits.put(habit);
-         });
+      // Create a MUTABLE copy of the list (THIS IS THE FIX!)
+      List<int> updatedDays = List.from(habit.completedDays);
+      
+      // Check if already completed today
+      final isAlreadyCompleted = updatedDays.contains(todayMs);
+
+      if (isCompleted && !isAlreadyCompleted) {
+        updatedDays.add(todayMs);  // Add to the mutable copy
+      } else if (!isCompleted && isAlreadyCompleted) {
+        updatedDays.remove(todayMs);  // Remove from the mutable copy
       }
-      readHabits();
-   }
 
+      // Assign the new list back to the habit
+      habit.completedDays = updatedDays;
+      await isar.habits.put(habit);
+    });
+
+    // refresh list & UI
+    await readHabits();
+  }
+}
    //UPDATE -edit habit name
    Future<void> updateHabitName(int id, String newName)async{
       //find the specific habit
@@ -126,7 +119,7 @@ class HabitDatabase extends ChangeNotifier{
         await isar.habits.put(habit);
       });
       }
-      readHabits();
+      await readHabits();
    }
 
    //DELETE - delete habits
@@ -135,7 +128,7 @@ class HabitDatabase extends ChangeNotifier{
       await isar.writeTxn(() async{
        await isar.habits.delete(id); 
       });
-      readHabits();
+     await readHabits(); 
    }
 
 

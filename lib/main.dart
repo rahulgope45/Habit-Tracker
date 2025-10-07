@@ -5,26 +5,23 @@ import 'package:habit_tracker/database/habit_database.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
-
-
   WidgetsFlutterBinding.ensureInitialized();
-  //intialize Database
+  
+  // Initialize the static Isar instance
   await HabitDatabase.intialize();
-  await HabitDatabase().saveFirstLaunchDate();
-
-
+  
+  // Create a single HabitDatabase instance
+  final habitDatabase = HabitDatabase();
+  await habitDatabase.saveFirstLaunchDate();
 
   runApp(
-    MultiProvider(providers: [
-      //habit provider
-      ChangeNotifierProvider(create: (context) => HabitDatabase()),
-
-      //theme provider
-      ChangeNotifierProvider(create: (context) => ThemeProvider()),
-
-    ],
-    child: const MyApp(),
-    
+    MultiProvider(
+      providers: [
+        // Use the SAME instance
+        ChangeNotifierProvider.value(value: habitDatabase),
+        ChangeNotifierProvider(create: (context) => ThemeProvider()),
+      ],
+      child: const MyApp(),
     )
   );
 }

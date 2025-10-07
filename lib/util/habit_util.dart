@@ -1,12 +1,10 @@
 //Given a habit list of completion days
 //is the habit completed today
 
-bool isHabitCompletedToday(List<DateTime> completedDays){
+bool isHabitCompletedToday(List<int> completedDaysMs) {
   final today = DateTime.now();
-  return completedDays.any(
-    (date)=>
-    date.year == today.year &&
-    date.month == today.month &&
-    date.day == today.day
-  );
+  final todayDate = DateTime(today.year, today.month, today.day);
+  final todayMs = todayDate.millisecondsSinceEpoch;
+  
+  return completedDaysMs.contains(todayMs);
 }

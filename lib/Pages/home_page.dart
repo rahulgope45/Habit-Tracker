@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:habit_tracker/componets/my_drawer.dart';
+import 'package:habit_tracker/componets/my_habit_tile.dart';
 import 'package:habit_tracker/database/habit_database.dart';
 import 'package:habit_tracker/models/habit.dart';
 import 'package:habit_tracker/util/habit_util.dart';
@@ -18,12 +19,15 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> { 
 
-  void initState(){
-    //read existing habits on app startup
-    Provider.of<HabitDatabase>(context, listen: false).readHabits();
-
-    super.initState();
-  }
+@override
+void initState() {
+  super.initState();
+  WidgetsBinding.instance.addPostFrameCallback((_) async {
+    final db = Provider.of<HabitDatabase>(context, listen: false);
+    await db.saveFirstLaunchDate();
+    await db.readHabits();
+  });
+}
 
 
 
@@ -81,6 +85,14 @@ void createNewHabit(){
     );
 }
 
+//Check habit on or off
+void checkHabitOnOff(bool? value, Habit habit)async{
+  //update
+  if(value != null){
+  await context.read<HabitDatabase>().updateHabitCompletion(habit.id, value);
+  }
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -121,9 +133,11 @@ void createNewHabit(){
         //check if the habit completed today
         bool isCompletedToday = isHabitCompletedToday(habit.completedDays);
 
-        return ListTile(
-          title: Text(habit.name),
-        );
+        return MyHabitTile(
+          text: habit.name,
+           isCompleted: isCompletedToday,
+           onChanged: (value) => checkHabitOnOff(value, habit),
+           );
       },);
   }
-}
+} 

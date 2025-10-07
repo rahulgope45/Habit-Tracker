@@ -18,7 +18,11 @@ class MyHabitTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Slidable(
+
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+    
+    child: Slidable(
       endActionPane: ActionPane
       (motion: const StretchMotion(),
        children: [
@@ -50,9 +54,9 @@ class MyHabitTile extends StatelessWidget {
           borderRadius: BorderRadius.circular(10),
         ),
         padding: const EdgeInsets.all(12),
-        margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 25),
+        
         child: ListTile(
-          title: Text(text),
+          title: Text(text, style: TextStyle(color: isCompleted ? Colors.white : Theme.of(context).colorScheme.primary),),
           leading: Checkbox(
             value: isCompleted,
             onChanged: onChanged,
@@ -62,6 +66,7 @@ class MyHabitTile extends StatelessWidget {
           ),
         ), 
       ),
+    )
     );
   }
 }

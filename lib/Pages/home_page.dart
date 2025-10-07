@@ -197,6 +197,7 @@ void deleteHabitBox(Habit habit){
       appBar: AppBar(
         title: const Text('Tracker'),
         
+        
       ),
       drawer: const MyDrawer(),
       //floating action button

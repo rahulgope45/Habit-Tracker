@@ -26,7 +26,7 @@ class HabitDatabase extends ChangeNotifier{
    Future<void> saveFirstLaunchDate() async {
       final existingSettings = await isar.appSettings.where().findFirst(); 
       if (existingSettings == null){
-         final settings = AppSettings()..firstLaunchDate = DateTime.now();
+         final settings = AppSettings()..firsLaunchDate = DateTime.now();
          await isar.writeTxn(() => isar.appSettings.put(settings));
       }
    }
@@ -34,7 +34,7 @@ class HabitDatabase extends ChangeNotifier{
    //Get first date of app startup (for heatmap)
    Future<DateTime?> getFirstLaunchDate() async{
       final settings = await isar.appSettings.where().findFirst();
-      return settings?.firstLaunchDate;
+      return settings?.firsLaunchDate;
    }
 
 

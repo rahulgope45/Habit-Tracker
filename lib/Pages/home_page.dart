@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:habit_tracker/componets/my_drawer.dart';
 import 'package:habit_tracker/componets/my_habit_tile.dart';
+import 'package:habit_tracker/componets/my_heat_map.dart';
 import 'package:habit_tracker/database/habit_database.dart';
 import 'package:habit_tracker/models/habit.dart';
 import 'package:habit_tracker/util/habit_util.dart';
@@ -209,11 +210,50 @@ void deleteHabitBox(Habit habit){
         
         ),
 
-    body: _buildHabitList(),
+    body: ListView(
+         children: [
+          //HeatMap
+          _buildHeatMap(),
 
+          //Habit Lists
+          _buildHabitList()
+         ],
+    ),
+      
       
     );
   }
+  //build habit map
+ Widget _buildHeatMap(){
+   //heatmap database
+  final habitDatabase = context.watch<HabitDatabase>();
+
+  //current habbits
+  List<Habit> currentHabits = habitDatabase.currentHabits;
+
+  //return ui
+  return FutureBuilder<DateTime?>(
+    future: habitDatabase.getFirstLaunchDate(),
+     builder: (context, snapshot){
+      //once the data is available -> Build HeatMaps
+       if(snapshot.hasData){
+        return MyHeatMap(
+        startDate: snapshot.data!,
+        datasets: prepareHeatMapDataset(currentHabits),
+           );
+       }
+       //Handle case where no data is returned
+       else{
+        return Container();
+       }
+     },
+    );
+ }
+
+
+
+
+  //build habit list
 
   Widget _buildHabitList(){
     //habit db
@@ -224,6 +264,8 @@ void deleteHabitBox(Habit habit){
     //current habits
     return ListView.builder(
       itemCount: currentHabits.length,
+      shrinkWrap: true,
+      physics: NeverScrollableScrollPhysics(),
       itemBuilder: (context, index){
         //get each individual habit
         final habit = currentHabits[index];
